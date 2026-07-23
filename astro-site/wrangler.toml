@@ -1,13 +1,11 @@
-# Reference config for `wrangler pages deploy`. If you connect this repo to
-# Cloudflare Pages via the dashboard (recommended, see README), you don't need
-# this file at all — set the KV binding in the dashboard instead:
-#   Pages project -> Settings -> Functions -> KV namespace bindings
-#   Variable name: SCREENER_KV
-
 name = "nse-live-terminal"
-pages_build_output_dir = "dist"
+main = "worker.js"
 compatibility_date = "2024-09-01"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
 
 [[kv_namespaces]]
 binding = "SCREENER_KV"
-id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+id = "8731d7cd5c76462f9e9b8e0778c06364"
