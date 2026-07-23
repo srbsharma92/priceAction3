@@ -165,3 +165,5 @@ export function initApp() {
   // Status pill also depends on the clock, not just data — tick it every minute.
   setInterval(renderStatusPill, 60 * 1000);
 }
+
+initApp();
