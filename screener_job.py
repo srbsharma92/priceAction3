@@ -213,7 +213,7 @@ def main():
 
     if not is_market_open(now_ist):
         print(f"Market closed at {now_ist.strftime('%H:%M:%S %d%b%y')} IST — skipping run.")
-        sys.exit(0)
+        ## sys.exit(0)
 
     df, df_5m_price, df_5m_vol, df_15m_price, df_15m_vol,df_D_price, df_D_vol,df_opening = screener()
 
