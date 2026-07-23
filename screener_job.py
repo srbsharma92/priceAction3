@@ -77,7 +77,7 @@ def screener():
         "name", "change", "change|5", "volume_change|5", "change|15", "volume_change|15",
         "ATR|60", "low|60", "high|60", "RSI|60",
         "close|60", "EMA10|60", "EMA20|60", "EMA200|60", "EMA10", "EMA20", "EMA200",
-        "close", 'volume','gap','volume|5',"volume_change",
+        "close", 'volume','gap','volume|5',"volume_change","market_cap_basic"
         "exchange"
     ]
     
@@ -145,7 +145,7 @@ def screener():
     df = pd.DataFrame(data_list, columns=cols)
     df = df[df['exchange'] == 'NSE']
     # Fliters for lighter data
-    df=df[ (df['close']>60) & (df['close']<10000)] #price filter
+    df=df[ (df['close']>60) & (df['close']<10000) & (df['market_cap_basic']>100000000)] #price filter
 
     
     #EMAs metrics
