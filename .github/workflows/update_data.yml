@@ -33,7 +33,7 @@ jobs:
 
       # ---- NEW: replaces "commit live_data.xlsx back to repo" ----
       - name: Publish data to Cloudflare KV
-        #if: steps.screener.outputs.market_open == 'true'
+        if: steps.screener.outputs.market_open == 'true'
         env:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
