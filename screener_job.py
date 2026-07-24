@@ -217,7 +217,7 @@ def main():
         if gh_output:
             with open(gh_output, "a") as f:
                 f.write("market_open=false\n")
-        ##sys.exit(0)
+        sys.exit(0)
     
     df, df_5m_price, df_5m_vol, df_15m_price, df_15m_vol,df_D_price, df_D_vol,df_opening = screener()
     timestamp = now_ist.strftime("%Y-%m-%d %H:%M:%S")
