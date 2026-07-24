@@ -6,6 +6,7 @@ This script is executed on a schedule by GitHub Actions
 (.github/workflows/update_data.yml), NOT by the Streamlit app.
 """
 import sys
+import os
 import pandas as pd
 from datetime import datetime, time as dtime
 import pytz
@@ -210,15 +211,16 @@ def screener():
 
 def main():
     now_ist = datetime.now(pytz.utc).astimezone(IST)
-
     if not is_market_open(now_ist):
         print(f"Market closed at {now_ist.strftime('%H:%M:%S %d%b%y')} IST — skipping run.")
-        sys.exit(0)
-
+        gh_output = os.environ.get("GITHUB_OUTPUT")
+        if gh_output:
+            with open(gh_output, "a") as f:
+                f.write("market_open=false\n")
+        ##sys.exit(0)
+    
     df, df_5m_price, df_5m_vol, df_15m_price, df_15m_vol,df_D_price, df_D_vol,df_opening = screener()
-
     timestamp = now_ist.strftime("%Y-%m-%d %H:%M:%S")
-
     with pd.ExcelWriter("data/live_data.xlsx", engine="openpyxl") as writer:
         (df_5m_price if df_5m_price is not None else pd.DataFrame()).to_excel(
             writer, sheet_name="5m_Price", index=False)
@@ -236,8 +238,11 @@ def main():
             writer, sheet_name="Opening", index=False)
         pd.DataFrame({"last_updated_ist": [timestamp]}).to_excel(
             writer, sheet_name="meta", index=False)
-
-    print(f"Data written at {timestamp} IST")
+    
+    gh_output = os.environ.get("GITHUB_OUTPUT")
+    if gh_output:
+        with open(gh_output, "a") as f:
+            f.write("market_open=true\n")
 
 
 if __name__ == "__main__":
