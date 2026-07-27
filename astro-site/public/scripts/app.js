@@ -281,43 +281,6 @@ function setupLuckyNumber() {
     requestAnimationFrame(tick);
   });
 }
-    
-function setupCoinFlip() {
-  const btn = document.getElementById('coin-btn');
-  const coin = document.getElementById('coin');
-  const result = document.getElementById('coin-result');
-  if (!btn || !coin || !result) return;
-
-  let flipping = false;
-  let currentRotation = 0;
-
-  btn.addEventListener('click', () => {
-    if (flipping) return;
-    flipping = true;
-    btn.disabled = true;
-    result.classList.remove('show', 'long', 'short');
-
-    const isLong = Math.random() < 0.5;
-    // Always land on the correct face: front (📈) = 0°/360°/..., back (📉) = 180°/540°/...
-    const extraSpins = 4; // full rotations before settling, for drama
-    const targetRotation =
-      currentRotation +
-      extraSpins * 360 +
-      (isLong ? 0 : 180) -
-      (currentRotation % 360); // normalize so it always lands exactly right
-
-    coin.style.transform = `rotateY(${targetRotation}deg)`;
-    currentRotation = targetRotation;
-
-    setTimeout(() => {
-      result.textContent = isLong ? '📈 LONG' : '📉 SHORT';
-      result.classList.add('show', isLong ? 'long' : 'short');
-      playDing();
-      btn.disabled = false;
-      flipping = false;
-    }, 1400); // matches CSS transition duration
-  });
-}
 
 async function fetchData() {
   try {
@@ -337,7 +300,6 @@ export function initApp() {
   setupTabs();
   setupCheckbox();
   setupLuckyNumber();
-  setupCoinFlip();
   fetchData();
   setInterval(fetchData, REFRESH_MS);
   // Status pill also depends on the clock, not just data — tick it every minute.
