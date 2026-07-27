@@ -323,12 +323,6 @@ hr {
   font-size: 1.2rem;
   font-weight: 700;
   color: #fff;
-}
-
-.lucky-number {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #fff;
   display: inline-block;
   min-width: 2ch;
   text-align: center;
