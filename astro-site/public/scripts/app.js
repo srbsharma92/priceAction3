@@ -162,6 +162,16 @@ function setupCheckbox() {
   });
 }
 
+function setupLuckyNumber() {
+  const btn = document.getElementById('lucky-btn');
+  const display = document.getElementById('lucky-number');
+  if (!btn || !display) return;
+  btn.addEventListener('click', () => {
+    const n = Math.floor(Math.random() * 99) + 1; // 1–99 inclusive
+    display.textContent = n;
+  });
+}
+
 async function fetchData() {
   try {
     const res = await fetch(DATA_URL, { cache: 'no-store' });
@@ -179,6 +189,7 @@ async function fetchData() {
 export function initApp() {
   setupTabs();
   setupCheckbox();
+  setupLuckyNumber();
   fetchData();
   setInterval(fetchData, REFRESH_MS);
   // Status pill also depends on the clock, not just data — tick it every minute.
