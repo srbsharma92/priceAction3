@@ -162,6 +162,88 @@ function setupCheckbox() {
   });
 }
 
+function playDing() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, ctx.currentTime); // A5
+    osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.1); // up to A6
+
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.4);
+  } catch (err) {
+    // Web Audio unavailable or blocked (e.g. autoplay policy) — fail silently
+  }
+}
+
+function fireConfetti() {
+  const canvas = document.createElement('canvas');
+  canvas.style.position = 'fixed';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
+  canvas.style.width = '100vw';
+  canvas.style.height = '100vh';
+  canvas.style.pointerEvents = 'none';
+  canvas.style.zIndex = '9999';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  const colors = ['#c9a227', '#ffd700', '#ffffff', '#2ecc71', '#e74c3c'];
+  const count = 120;
+  const particles = Array.from({ length: count }, () => ({
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    vx: (Math.random() - 0.5) * 12,
+    vy: (Math.random() - 1.5) * 12,
+    size: Math.random() * 6 + 4,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    rotation: Math.random() * 360,
+    rotationSpeed: (Math.random() - 0.5) * 20,
+    gravity: 0.35,
+    life: 1,
+  }));
+
+  let frame = 0;
+  const maxFrames = 90;
+
+  function animate() {
+    frame++;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach((p) => {
+      p.vy += p.gravity;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rotation += p.rotationSpeed;
+      p.life = 1 - frame / maxFrames;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rotation * Math.PI) / 180);
+      ctx.globalAlpha = Math.max(p.life, 0);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+      ctx.restore();
+    });
+
+    if (frame < maxFrames) {
+      requestAnimationFrame(animate);
+    } else {
+      canvas.remove();
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
 function setupLuckyNumber() {
   const btn = document.getElementById('lucky-btn');
   const display = document.getElementById('lucky-number');
@@ -170,27 +252,28 @@ function setupLuckyNumber() {
   let spinning = false;
 
   btn.addEventListener('click', () => {
-    if (spinning) return; // ignore clicks mid-spin
+    if (spinning) return;
     spinning = true;
     btn.disabled = true;
     display.classList.remove('lucky-pop');
 
-    const finalNumber = Math.floor(Math.random() * 99) + 1; // 1–99 inclusive
-    const spinDuration = 1200; // total ms of flicker
+    const finalNumber = Math.floor(Math.random() * 99) + 1;
+    const spinDuration = 1200;
     const intervalMs = 60;
     const startTime = performance.now();
 
     function tick(now) {
       const elapsed = now - startTime;
       if (elapsed < spinDuration) {
-        // Show random flicker numbers, slowing down near the end
         const progress = elapsed / spinDuration;
-        const currentInterval = intervalMs + progress * 120; // slows down
+        const currentInterval = intervalMs + progress * 120;
         display.textContent = Math.floor(Math.random() * 99) + 1;
         setTimeout(() => requestAnimationFrame(tick), currentInterval);
       } else {
         display.textContent = finalNumber;
         display.classList.add('lucky-pop');
+        playDing();
+        fireConfetti();
         btn.disabled = false;
         spinning = false;
       }
