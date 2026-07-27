@@ -1,4 +1,5 @@
 import { FO_LIST } from './fo_list.js';
+import { QUOTES } from './quotes.js';
 
 // The Pages Function that serves the latest JSON pushed by the GitHub
 // Action (see functions/api/data.js). Same-origin, so a plain path works.
@@ -108,6 +109,22 @@ function renderStatusPill() {
     </span>`;
 }
 
+function pickQuote(seed) {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  }
+  return QUOTES[hash % QUOTES.length];
+}
+
+function renderQuote() {
+  const el = document.getElementById('quote-block');
+  if (!el || !QUOTES.length) return;
+  const seed = latestData?.last_updated_ist ?? String(Date.now());
+  const quote = pickQuote(seed);
+  el.innerHTML = `"${quote.text}" — ${quote.author}`;
+}
+
 function renderAllTabs() {
   if (!latestData) return;
   for (const section of SECTIONS) {
@@ -155,6 +172,7 @@ async function fetchData() {
     latestData = latestData ?? {};
   }
   renderStatusPill();
+  renderQuote();
   renderAllTabs();
 }
 
