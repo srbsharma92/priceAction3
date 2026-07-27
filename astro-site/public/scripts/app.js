@@ -296,11 +296,23 @@ async function fetchData() {
   renderAllTabs();
 }
 
+function setupAboutToggle() {
+  const toggle = document.getElementById('about-toggle');
+  const content = document.getElementById('about-content');
+  if (!toggle || !content) return;
+
+  toggle.addEventListener('click', () => {
+    const isOpen = content.classList.toggle('open');
+    toggle.textContent = isOpen ? 'Developed by Saurabh Sharma ▴' : 'Developed by Saurabh Sharma ▾';
+  });
+}
+
 export function initApp() {
   setupTabs();
   setupCheckbox();
   setupLuckyNumber();
   fetchData();
+  setupAboutToggle();
   setInterval(fetchData, REFRESH_MS);
   // Status pill also depends on the clock, not just data — tick it every minute.
   setInterval(renderStatusPill, 60 * 1000);
