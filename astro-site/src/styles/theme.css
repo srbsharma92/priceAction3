@@ -359,11 +359,23 @@ hr {
     margin-top: 0.4rem;
   }
   
-  .about-toggle {
+  .about-toggle-btn {
     background: none;
     border: none;
     cursor: pointer;
-    font: inherit;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #D4AF37;
+    padding: 4px 0;
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .about-toggle-btn:hover {
+    color: #F4E4A6;
+    text-decoration: underline;
   }
   
   .about-content {
