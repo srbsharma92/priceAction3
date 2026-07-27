@@ -29,6 +29,7 @@ jobs:
 
       # ---- UNCHANGED: your existing scraper step ----
       - name: Run screener job
+        id: screener 
         run: python screener_job.py
 
       # ---- NEW: replaces "commit live_data.xlsx back to repo" ----
