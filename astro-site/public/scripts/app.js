@@ -337,6 +337,7 @@ export function initApp() {
   setupTabs();
   setupCheckbox();
   setupLuckyNumber();
+  setupCoinFlip();
   fetchData();
   setInterval(fetchData, REFRESH_MS);
   // Status pill also depends on the clock, not just data — tick it every minute.
