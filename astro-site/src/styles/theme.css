@@ -297,6 +297,34 @@ hr {
   margin-top: 1rem;
 }
 
+.lucky-number-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.lucky-btn {
+  background: transparent;
+  border: 1px solid #c9a227; /* match your gold accent */
+  color: #c9a227;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.lucky-btn:hover {
+  background: rgba(201, 162, 39, 0.1);
+}
+
+.lucky-number {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
 @media (max-width: 640px) {
   .hero-title { font-size: 1.8rem; }
   .controls-card { flex-direction: column; align-items: stretch; }
