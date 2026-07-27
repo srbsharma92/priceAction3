@@ -100,11 +100,11 @@ function renderStatusPill() {
   const dotClass = marketOpen ? 'status-dot' : 'status-dot closed';
   const statusText = marketOpen ? 'LIVE' : 'CLOSED';
   const lastUpdated = latestData?.last_updated_ist ?? 'Unknown';
-  const NextRefresh = marketOpen? 'Next refresh in 5mins' : '';
+  const nextRefreshHtml = marketOpen ? '&nbsp;•&nbsp;Next refresh in 5mins' : '';
   document.getElementById('status-pill-wrap').innerHTML = `
     <span class="status-pill">
       <span class="${dotClass}"></span>
-      <span class="status-label">${statusText}</span>&nbsp;•&nbsp;Updated (IST): ${lastUpdated}&nbsp;•&nbsp;${NextRefresh}
+      <span class="status-label">${statusText}</span>&nbsp;•&nbsp;Updated (IST): ${lastUpdated}${nextRefreshHtml}
     </span>`;
 }
 
