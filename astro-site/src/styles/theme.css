@@ -325,6 +325,41 @@ hr {
   color: #fff;
 }
 
+.lucky-number {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  display: inline-block;
+  min-width: 2ch;
+  text-align: center;
+  transition: color 0.2s ease;
+}
+
+.lucky-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.lucky-pop {
+  animation: luckyPop 0.5s ease;
+}
+
+@keyframes luckyPop {
+  0% {
+    transform: scale(1.6);
+    color: #c9a227;
+    text-shadow: 0 0 20px rgba(201, 162, 39, 0.8);
+  }
+  60% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+    color: #fff;
+    text-shadow: none;
+  }
+}
+
 @media (max-width: 640px) {
   .hero-title { font-size: 1.8rem; }
   .controls-card { flex-direction: column; align-items: stretch; }
