@@ -50,7 +50,7 @@ function isNseMarketOpen() {
   if (day === 0 || day === 6) return false;
   const minutesNow = ist.getUTCHours() * 60 + ist.getUTCMinutes();
   const open = 9 * 60 + 3;
-  const close = 15 * 60 + 56;
+  const close = 15 * 60 + 39;
   return minutesNow >= open && minutesNow <= close;
 }
 
