@@ -166,9 +166,36 @@ function setupLuckyNumber() {
   const btn = document.getElementById('lucky-btn');
   const display = document.getElementById('lucky-number');
   if (!btn || !display) return;
+
+  let spinning = false;
+
   btn.addEventListener('click', () => {
-    const n = Math.floor(Math.random() * 99) + 1; // 1–99 inclusive
-    display.textContent = n;
+    if (spinning) return; // ignore clicks mid-spin
+    spinning = true;
+    btn.disabled = true;
+    display.classList.remove('lucky-pop');
+
+    const finalNumber = Math.floor(Math.random() * 99) + 1; // 1–99 inclusive
+    const spinDuration = 1200; // total ms of flicker
+    const intervalMs = 60;
+    const startTime = performance.now();
+
+    function tick(now) {
+      const elapsed = now - startTime;
+      if (elapsed < spinDuration) {
+        // Show random flicker numbers, slowing down near the end
+        const progress = elapsed / spinDuration;
+        const currentInterval = intervalMs + progress * 120; // slows down
+        display.textContent = Math.floor(Math.random() * 99) + 1;
+        setTimeout(() => requestAnimationFrame(tick), currentInterval);
+      } else {
+        display.textContent = finalNumber;
+        display.classList.add('lucky-pop');
+        btn.disabled = false;
+        spinning = false;
+      }
+    }
+    requestAnimationFrame(tick);
   });
 }
 
