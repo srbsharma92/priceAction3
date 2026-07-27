@@ -220,7 +220,7 @@ def main():
         sys.exit(0)
     
     df, df_5m_price, df_5m_vol, df_15m_price, df_15m_vol,df_D_price, df_D_vol,df_opening = screener()
-    timestamp = now_ist.strftime("%b-%d %H:%M")
+    timestamp = now_ist.strftime("%d-%b %H:%M")
     with pd.ExcelWriter("data/live_data.xlsx", engine="openpyxl") as writer:
         (df_5m_price if df_5m_price is not None else pd.DataFrame()).to_excel(
             writer, sheet_name="5m_Price", index=False)
