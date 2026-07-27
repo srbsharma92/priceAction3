@@ -272,13 +272,13 @@ hr {
   text-align: center;
   font-family: 'Playfair Display', serif;
   font-weight: 700;
-  font-size: 1.3rem;
+  font-size: 1rem;
   color: #D4AF37;
   margin-top: 0.4rem;
 }
 .footer-contact {
   text-align: center;
-  font-size: 15px;
+  font-size: 8px;
   margin-top: 0.3rem;
 }
 .footer-contact a {
@@ -291,7 +291,7 @@ hr {
 }
 .footer-note {
   text-align: right;
-  font-size: 11px;
+  font-size: 6px;
   font-style: italic;
   color: #64708A;
   margin-top: 1rem;
