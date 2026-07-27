@@ -395,4 +395,43 @@ hr {
   .coin-flip-wrap {
     flex-wrap: wrap;
   }
+
+  .about-section {
+    text-align: center;
+    margin-top: 0.4rem;
+  }
+  
+  .about-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+  }
+  
+  .about-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.35s ease;
+    opacity: 0;
+    max-width: 480px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  
+  .about-content.open {
+    max-height: 600px;
+    opacity: 1;
+    margin-top: 0.8rem;
+  }
+  
+  .about-content p {
+    font-size: 0.85rem;
+    color: #9DAAC0;
+    line-height: 1.6;
+    margin: 0 0 0.7rem;
+  }
+  
+  .about-content p:last-child {
+    margin-bottom: 0;
+  }
 }
