@@ -3,7 +3,6 @@ export const QUOTES = [
   { text: "There is nothing new in Wall Street. What has happened before will happen again.", author: "Jesse Livermore" },
   { text: "It never was my thinking that made the big money for me. It always was my sitting.", author: "Jesse Livermore" },
   { text: "The stock market is a device for transferring money from the impatient to the patient.", author: "Warren Buffett" },
-  { text: "It never was my thinking that made the big money for me. It always was my sitting.", author: "Jesse Livermore" },
   { text: "Amateurs think about how much money they can make. Professionals think about how much money they could lose.", author: "Jack Schwager" },
   { text: "It's not whether you're right or wrong that's important, but how much money you make when you're right and how much you lose when you're wrong.", author: "George Soros" },
   { text: "If you can't take small losses, sooner or later you will take the mother of all losses.", author: "Ed Seykota" },
@@ -68,7 +67,6 @@ export const QUOTES = [
   { text: "You have to learn how to lose; it is more important than learning how to win.", author: "Mark Weinstein" },
   { text: "By failing to prepare, you are preparing to fail.", author: "Benjamin Franklin" },
   { text: "In this business, if you're good, you're right six times out of ten.", author: "Peter Lynch" },
-  { text: "The biggest risk is not taking any risk.", author: "Mark Zuckerberg" },
   { text: "The four most dangerous words in investing are: This time it's different.", author: "Sir John Templeton" },
   { text: "The stock market is filled with individuals who know the price of everything, but the value of nothing.", author: "Philip Fisher" },
   { text: "In trading, the market can stay irrational longer than you can remain solvent.", author: "A. Gary Shilling" },
@@ -162,6 +160,12 @@ export const QUOTES = [
   { text: "Patience is the rarest and most valuable trading skill.", author: "Richard Russell" },
   { text: "Good investing is boring.", author: "George F. Baker" },
   { text: "The stock market is a giant distraction to the business of investing.", author: "John C. Bogle" },
+  { text: "Cut your losses short and let your winners run.", author: "Trading proverb" },
+  { text: "Rule No. 1: Never lose money. Rule No. 2: Never forget Rule No. 1.", author: "Warren Buffett" },
+  { text: "There is only one side to the stock market — not the bull side or the bear side, but the right side.", author: "Jesse Livermore" },
+  { text: "Buy when there's blood in the streets, even if the blood is your own.", author: "Baron Rothschild" },
+  { text: "Play the market only when all factors are in your favor. No person can play the market all the time and win.", author: "Jesse Livermore" },
+  { text: "Don't try to buy at the bottom and sell at the top. This can't be done except by liars.", author: "Bernard Baruch" },
 
   // add more quotes here, same { text, author } shape
 ];
