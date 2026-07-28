@@ -31,7 +31,6 @@ export const QUOTES = [
   { text: "Don't focus on making money; focus on protecting what you have.", author: "Paul Tudor Jones" },
   { text: "Confidence is not 'I will make money on this trade.' Confidence is 'I will be fine if I lose.'", author: "Yvan Byeajee" },
   { text: "Losers average losers.", author: "Paul Tudor Jones" },
-  { text: "Michael Jordan didn't become great by just shooting hoops; he reviewed tape.", author: "Brett Steenbarger" },
   { text: "The trader's diary is the ultimate tool for self-improvement.", author: "Brett Steenbarger" },
   { text: "You can’t control the market, but you can control your reaction to it.", author: "Mark Douglas" },
   { text: "I think investment psychology is by far the most important element, followed by risk control.", author: "Tom Basso" },
@@ -115,9 +114,8 @@ export const QUOTES = [
   { text: "If you can't measure it, you probably can't manage it.", author: "Van K. Tharp" },
   { text: "Trading is a business of managing uncertainty.", author: "Van K. Tharp" },
   { text: "The market is the sum total of the psychology of all participants.", author: "Alexander Elder" },
-  { text: "The game taught me the game. And it didn't spare the rod while teaching.", author: "Jesse Livermore" },
   { text: "Men who can both be right and sit tight are uncommon.", author: "Jesse Livermore" },
-  { text: "Never argue with the tape. Prices are never too high to begin buying or too low to begin selling.", author: "Jesse Livermore" },
+  { text: "Never argue with the market price. Prices are never too high to begin buying or too low to begin selling.", author: "Jesse Livermore" },
   { text: "The money is made by sitting, not trading.", author: "Jesse Livermore" },
   { text: "Experience has taught me that the important thing is to watch the market itself.", author: "Jesse Livermore" },
   { text: "You don't have to swing at every pitch. You can wait for your pitch.", author: "Warren Buffett" },
@@ -164,7 +162,6 @@ export const QUOTES = [
   { text: "Patience is the rarest and most valuable trading skill.", author: "Richard Russell" },
   { text: "Good investing is boring.", author: "George F. Baker" },
   { text: "The stock market is a giant distraction to the business of investing.", author: "John C. Bogle" },
-  { text: "Stay the course.", author: "John C. Bogle" },
 
   // add more quotes here, same { text, author } shape
 ];
