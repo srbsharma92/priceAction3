@@ -127,7 +127,6 @@ export const QUOTES = [
   { text: "Risk means more things can happen than will happen.", author: "Howard Marks" },
   { text: "The possibility of permanent loss is the risk I worry about.", author: "Howard Marks" },
   { text: "The trend is your friend until it ends.", author: "Martin Zweig" },
-  { text: "Don't fight the Fed.", author: "Martin Zweig" },
   { text: "Risk control is the most important thing in trading.", author: "Larry Hite" },
   { text: "If you don't bet, you can't win. If you lose all your chips, you can't bet.", author: "Larry Hite" },
   { text: "Never let risk exceed your predetermined comfort level.", author: "Larry Hite" },
