@@ -252,7 +252,7 @@ function setupLuckyNumber() {
   let spinning = false;
 
   btn.addEventListener('click', () => {
-    if (spinning) return;
+    if (spinning || btn.disabled) return; // guard against any leftover clicks
     spinning = true;
     btn.disabled = true;
     display.classList.remove('lucky-pop');
@@ -274,8 +274,8 @@ function setupLuckyNumber() {
         display.classList.add('lucky-pop');
         playDing();
         fireConfetti();
-        btn.disabled = false;
         spinning = false;
+        // btn stays disabled — no re-enable here, so it only resets on page refresh
       }
     }
     requestAnimationFrame(tick);
