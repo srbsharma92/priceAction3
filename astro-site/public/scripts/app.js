@@ -82,7 +82,7 @@ function momentumRowClass(row) {
 
 function renderTable(rows) {
   if (!rows || rows.length === 0) {
-    return '<div class="empty-note">No data available.</div>';
+    return '<div class="empty-note">No data at the moment, wait for next refresh !! </div>';
   }
   const cols = Object.keys(rows[0]);
   const head = cols.map((c) => `<th>${c}</th>`).join('');
@@ -138,7 +138,7 @@ function renderAllTabs() {
         html += renderTable(rows);
       }
     }
-    panel.innerHTML = html || '<div class="empty-note">No data available.</div>';
+    panel.innerHTML = html || '<div class="empty-note">No data at the moment, wait for next refresh !!</div>';
   }
 }
 
