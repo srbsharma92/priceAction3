@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Runs the screener logic and writes results to data/live_data.xlsx.
+Runs the screener logic + sectoral flow logic and writes results to data/live_data.xlsx.
 This script is executed on a schedule by GitHub Actions
 (.github/workflows/update_data.yml), NOT by the Streamlit app.
 """
@@ -12,8 +12,8 @@ from datetime import datetime, time as dtime
 import pytz
 import requests
 import json
-import pandas as pd
 import numpy as np
+import yfinance as yf
 
 IST = pytz.timezone('Asia/Kolkata')
 
@@ -25,6 +25,9 @@ def is_market_open(now_ist: datetime) -> bool:
     return start <= now_ist.time() <= end
 
 
+# =====================================================================
+# 1) STOCK SCREENER (unchanged)
+# =====================================================================
 def screener():
     country="india"
     tickers="any"
@@ -132,7 +135,7 @@ def screener():
     
     if response.status_code != 200:
         print(f"Request failed with status: {response.status_code} {response.reason}")
-        return None, None, None, None, None, None
+        return None, None, None, None, None, None, None, None
     
     y = response.json()
     
@@ -209,6 +212,101 @@ def screener():
     return df, df_5m_Price,df_5m_Vol,df_15m_Price,df_15m_Vol,df_D_Price,df_D_Vol,df_opening
 
 
+# =====================================================================
+# 2) SECTORAL FLOW (separate logic, independent of the screener)
+# =====================================================================
+def sectoral_flow():
+    """Returns result_df with sectoral index momentum (1/5/10/15 min)."""
+
+    # NIFTY SECTORAL INDICES - Yahoo Finance symbols
+    sectors = {
+        # CORE / MAJOR SECTORAL INDICES
+        "Nifty Auto": "^CNXAUTO",
+        "Nifty Bank": "^NSEBANK",
+        "Nifty Financial Services": "^CNXFIN",
+        "Nifty FMCG": "^CNXFMCG",
+        "Nifty IT": "^CNXIT",
+        "Nifty Media": "^CNXMEDIA",
+        "Nifty Metal": "^CNXMETAL",
+        "Nifty Pharma": "^CNXPHARMA",
+        #"Nifty Private Bank": "^CNXPVTBANK",
+        "Nifty PSU Bank": "^CNXPSUBANK",
+        "Nifty Realty": "^CNXREALTY",
+
+        # OTHER MAJOR NSE SECTORAL INDICES
+        "Nifty Consumer Durables": "^CNXCONSUM",
+        "Nifty Oil & Gas": "^CNXENERGY",
+    }
+
+    tickers = list(sectors.values())
+
+    # Download 1-minute data
+    data = yf.download(
+        tickers=tickers,
+        period="1d",
+        interval="1m",
+        group_by="ticker",
+        auto_adjust=False,
+        progress=False,
+        threads=True
+    )
+
+    # Calculate changes
+    results = []
+
+    for sector, ticker in sectors.items():
+        try:
+            df = data[ticker].dropna()
+
+            if len(df) < 16:
+                continue
+
+            current = float(df["Close"].iloc[-1])
+
+            # Prices at different intervals ago
+            p1  = float(df["Close"].iloc[-2])
+            p5  = float(df["Close"].iloc[-6])
+            p10 = float(df["Close"].iloc[-11])
+            p15 = float(df["Close"].iloc[-16])
+
+            # Percentage changes
+            chg_1m = ((current / p1) - 1) * 100
+            chg_5m = ((current / p5) - 1) * 100
+            chg_10m = ((current / p10) - 1) * 100
+            chg_15m = ((current / p15) - 1) * 100
+
+            # Timestamp: convert to IST and drop tz-info (Excel can't store tz-aware datetimes)
+            ts = df.index[-1]
+            if ts.tzinfo is None:
+                ts = pytz.utc.localize(ts)
+            ts = ts.astimezone(IST).replace(tzinfo=None)
+
+            results.append({
+                "Sector": sector,
+                "Price": round(current, 2),
+                "1M %": round(chg_1m, 2),
+                "5M %": round(chg_5m, 2),
+                "10M %": round(chg_10m, 2),
+                "15M %": round(chg_15m, 2),
+                "Time": ts
+            })
+
+        except Exception as e:
+            print(f"Error: {sector} -> {e}")
+
+    # Final dataframe
+    result_df = pd.DataFrame(results)
+
+    if not result_df.empty:
+        # Sort by 5-minute momentum
+        result_df = result_df.sort_values(
+            "5M %",
+            ascending=False
+        ).reset_index(drop=True)
+
+    return result_df
+
+
 def main():
     now_ist = datetime.now(pytz.utc).astimezone(IST)
     if not is_market_open(now_ist):
@@ -220,6 +318,14 @@ def main():
         sys.exit(0)
     
     df, df_5m_price, df_5m_vol, df_15m_price, df_15m_vol,df_D_price, df_D_vol,df_opening = screener()
+
+    # Sectoral flow - wrapped so a Yahoo failure never breaks the screener output
+    try:
+        result_df = sectoral_flow()
+    except Exception as e:
+        print(f"Sectoral flow failed: {e}")
+        result_df = pd.DataFrame()
+
     timestamp = now_ist.strftime("%d-%b %H:%M")
     with pd.ExcelWriter("data/live_data.xlsx", engine="openpyxl") as writer:
         (df_5m_price if df_5m_price is not None else pd.DataFrame()).to_excel(
@@ -236,6 +342,8 @@ def main():
             writer, sheet_name="D_Vol", index=False)
         (df_opening if df_opening is not None else pd.DataFrame()).to_excel(
             writer, sheet_name="Opening", index=False)
+        result_df.to_excel(
+            writer, sheet_name="Sectoral Flow", index=False)
         pd.DataFrame({"last_updated_ist": [timestamp]}).to_excel(
             writer, sheet_name="meta", index=False)
     
