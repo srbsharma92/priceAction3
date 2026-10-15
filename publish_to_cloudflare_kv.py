@@ -37,6 +37,7 @@ SHEET_MAP = {
     "D_Price": "d_price",
     "D_Vol": "d_vol",
     "Opening": "opening",
+    "Sectoral Flow": "Sectoral Flow",
 }
 
 
