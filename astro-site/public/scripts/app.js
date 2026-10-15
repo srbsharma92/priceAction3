@@ -15,6 +15,8 @@ const SECTIONS = [
       { key: '5m_price', sortCol: 'Price Change% in 5mins', icon: '⚡', label: 'Price Momentum in Last 5 Mins' },
       { key: '5m_vol', sortCol: 'Volume Change% in 5mins', icon: '📊', label: 'Volume Momentum in Last 5 Mins' },
     ],
+    // Rendered below the volume table (sheet "Sectoral Flow" in live_data.xlsx)
+    sectoral: true,
   },
   {
     tab: '15m',
@@ -37,6 +39,18 @@ const SECTIONS = [
     ],
   },
 ];
+
+// Sectoral Flow table definition: [source column, display header, type]
+const SECTOR_COLUMNS = [
+  { src: 'Sector', head: 'Sector', type: 'text' },
+  { src: 'Price', head: 'Price', type: 'price' },
+  { src: '1M %', head: '1M %', type: 'pct' },
+  { src: '5M %', head: '5M %', type: 'pct' },
+  { src: '10M %', head: '10M %', type: 'pct' },
+  { src: '15M %', head: '15M %', type: 'pct' },
+  { src: 'Time', head: 'Updated (IST)', type: 'time' },
+];
+const SECTOR_SORT_COL = '5M %';
 
 let latestData = null;
 let foFilterEnabled = true;
@@ -96,6 +110,104 @@ function renderTable(rows) {
   return `<div class="table-wrap"><table class="data-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
 }
 
+/* ------------------------------------------------------------------ */
+/* Sectoral Flow                                                       */
+/* ------------------------------------------------------------------ */
+
+// Finds the sectoral rows in the JSON payload regardless of exactly how the
+// Excel->JSON step names the key ("sectoral_flow", "Sectoral Flow", "sectoralflow"...).
+function getSectoralRows() {
+  if (!latestData) return null;
+  const wanted = 'sectoralflow';
+  const key = Object.keys(latestData).find(
+    (k) => k.toLowerCase().replace(/[^a-z0-9]/g, '') === wanted
+  );
+  const rows = key ? latestData[key] : null;
+  return Array.isArray(rows) ? rows : null;
+}
+
+const PRICE_FMT = new Intl.NumberFormat('en-IN', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+function toNumber(val) {
+  if (val === null || val === undefined || val === '') return null;
+  const n = typeof val === 'number' ? val : parseFloat(val);
+  return Number.isFinite(n) ? n : null;
+}
+
+// Accepts ISO strings ("2026-10-15T14:32:00"), "YYYY-MM-DD HH:MM:SS" or epoch ms.
+// Time is already IST (naive) from the Python side, so no timezone conversion here.
+function formatTime(val) {
+  if (val === null || val === undefined || val === '') return '–';
+  if (typeof val === 'number') {
+    const d = new Date(val);
+    if (Number.isNaN(d.getTime())) return '–';
+    const hh = String(d.getUTCHours()).padStart(2, '0');
+    const mm = String(d.getUTCMinutes()).padStart(2, '0');
+    return `${hh}:${mm}`;
+  }
+  const m = String(val).match(/(\d{2}):(\d{2})/);
+  return m ? `${m[1]}:${m[2]}` : String(val);
+}
+
+function renderPctCell(val, isHot) {
+  const n = toNumber(val);
+  if (n === null) return '<td class="num flat">–</td>';
+  const rounded = Math.round(n * 100) / 100;
+  let cls = 'flat';
+  let arrow = '';
+  if (rounded > 0) { cls = 'pos'; arrow = '<span class="arrow">▲</span>'; }
+  else if (rounded < 0) { cls = 'neg'; arrow = '<span class="arrow">▼</span>'; }
+  const sign = rounded > 0 ? '+' : '';
+  const hot = isHot ? ' hot' : '';
+  return `<td class="num ${cls}${hot}">${arrow}${sign}${rounded.toFixed(2)}%</td>`;
+}
+
+function renderSectoralTable(rows) {
+  const sorted = [...rows].sort(
+    (a, b) => (toNumber(b[SECTOR_SORT_COL]) ?? -Infinity) - (toNumber(a[SECTOR_SORT_COL]) ?? -Infinity)
+  );
+
+  const head = SECTOR_COLUMNS.map((c) => {
+    const cls = c.type === 'time' ? 'time-head' : c.type === 'text' ? '' : 'num';
+    return `<th class="${cls}">${c.head}</th>`;
+  }).join('');
+
+  const body = sorted
+    .map((row, idx) => {
+      const n5 = toNumber(row[SECTOR_SORT_COL]);
+      const rowCls = n5 === null || n5 === 0 ? '' : n5 > 0 ? 'momentum-bullish' : 'momentum-bearish';
+      const cells = SECTOR_COLUMNS.map((c) => {
+        const val = row[c.src];
+        switch (c.type) {
+          case 'text':
+            return `<td class="sector-name"><span class="rank">${idx + 1}</span>${val ?? ''}</td>`;
+          case 'price': {
+            const n = toNumber(val);
+            return `<td class="num">${n === null ? '–' : PRICE_FMT.format(n)}</td>`;
+          }
+          case 'pct':
+            return renderPctCell(val, c.src === SECTOR_SORT_COL);
+          case 'time':
+            return `<td class="time-cell">${formatTime(val)}</td>`;
+          default:
+            return `<td>${val ?? ''}</td>`;
+        }
+      }).join('');
+      return `<tr class="${rowCls}">${cells}</tr>`;
+    })
+    .join('');
+
+  return (
+    `<div class="sector-note">Nifty sectoral indices • ranked by 5-minute momentum</div>` +
+    `<div class="table-wrap"><table class="data-table sector-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`
+  );
+}
+
+/* ------------------------------------------------------------------ */
+
 function renderStatusPill() {
   const marketOpen = isNseMarketOpen();
   const dotClass = marketOpen ? 'status-dot' : 'status-dot closed';
@@ -136,6 +248,14 @@ function renderAllTabs() {
       if (rows && rows.length) {
         html += `<div class="section-badge"><span class="icon">${t.icon}</span><span class="label">${t.label}</span></div>`;
         html += renderTable(rows);
+      }
+    }
+    // Sectoral Flow sits under the volume momentum table (not affected by the F&O filter)
+    if (section.sectoral) {
+      const sectorRows = getSectoralRows();
+      if (sectorRows && sectorRows.length) {
+        html += `<div class="section-badge"><span class="icon">🧭</span><span class="label">Sectoral Flow — Sector Index Momentum</span></div>`;
+        html += renderSectoralTable(sectorRows);
       }
     }
     panel.innerHTML = html || '<div class="empty-note">No data at the moment, wait for next refresh !!</div>';
