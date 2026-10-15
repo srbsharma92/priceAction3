@@ -15,8 +15,6 @@ const SECTIONS = [
       { key: '5m_price', sortCol: 'Price Change% in 5mins', icon: '⚡', label: 'Price Momentum in Last 5 Mins' },
       { key: '5m_vol', sortCol: 'Volume Change% in 5mins', icon: '📊', label: 'Volume Momentum in Last 5 Mins' },
     ],
-    // Rendered below the volume table (sheet "Sectoral Flow" in live_data.xlsx)
-    sectoral: true,
   },
   {
     tab: '15m',
@@ -250,15 +248,22 @@ function renderAllTabs() {
         html += renderTable(rows);
       }
     }
-    // Sectoral Flow sits under the volume momentum table (not affected by the F&O filter)
-    if (section.sectoral) {
-      const sectorRows = getSectoralRows();
-      if (sectorRows && sectorRows.length) {
-        html += `<div class="section-badge"><span class="icon">🧭</span><span class="label">Sectoral Flow — Sector Index Momentum</span></div>`;
-        html += renderSectoralTable(sectorRows);
-      }
-    }
     panel.innerHTML = html || '<div class="empty-note">No data at the moment, wait for next refresh !!</div>';
+  }
+}
+
+// Sectoral Flow: standalone section above the footer quote (not part of any tab,
+// not affected by the F&O filter).
+function renderSectoral() {
+  const el = document.getElementById('sectoral-section');
+  if (!el || !latestData) return;
+  const rows = getSectoralRows();
+  const badge = `<div class="section-badge"><span class="icon">🧭</span><span class="label">Sectoral Flow — Sector Index Momentum</span></div>`;
+  if (rows && rows.length) {
+    el.innerHTML = badge + renderSectoralTable(rows);
+  } else {
+    console.warn('Sectoral Flow not found in /api/data. Keys received:', Object.keys(latestData));
+    el.innerHTML = badge + '<div class="empty-note">Sectoral data not available at the moment, wait for next refresh !!</div>';
   }
 }
 
@@ -414,6 +419,7 @@ async function fetchData() {
   renderStatusPill();
   renderQuote();
   renderAllTabs();
+  renderSectoral();
 }
 
 function setupAboutToggle() {
