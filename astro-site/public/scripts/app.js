@@ -42,11 +42,10 @@ const SECTIONS = [
 const SECTOR_COLUMNS = [
   { src: 'Sector', head: 'Sector', type: 'text' },
   { src: 'Price', head: 'Price', type: 'price' },
-  { src: '1M %', head: '1M %', type: 'pct' },
-  { src: '5M %', head: '5M %', type: 'pct' },
-  { src: '10M %', head: '10M %', type: 'pct' },
-  { src: '15M %', head: '15M %', type: 'pct' },
-  { src: 'Time', head: 'Updated (IST)', type: 'time' },
+  { src: '1M %', head: '1min%', type: 'pct' },
+  { src: '5M %', head: '5mins%', type: 'pct' },
+  { src: '10M %', head: '10mins%', type: 'pct' },
+  { src: '15M %', head: '15mins%', type: 'pct' },
 ];
 const SECTOR_SORT_COL = '5M %';
 
