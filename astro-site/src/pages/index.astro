@@ -17,6 +17,66 @@ import '../styles/theme.css';
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NSE Live Price Action | Smart Money Terminal</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>" />
+
+    <!-- Sectoral Flow table styling.
+         is:global is required because the table HTML is injected by app.js at runtime
+         (Astro's default scoped styles would not match it). Colours match the site's
+         gold / green / red palette; row & header styling is inherited from .data-table. -->
+    <style is:global>
+      .sector-note {
+        margin: 0 0 10px 2px;
+        font-size: 0.78rem;
+        opacity: 0.7;
+        letter-spacing: 0.02em;
+      }
+      .sector-table th.num,
+      .sector-table td.num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .sector-table td.sector-name {
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .sector-table td.time-cell {
+        text-align: center;
+        opacity: 0.75;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .sector-table th.time-head {
+        text-align: center;
+      }
+      .sector-table td.pos {
+        color: #2ecc71;
+        font-weight: 600;
+      }
+      .sector-table td.neg {
+        color: #e74c3c;
+        font-weight: 600;
+      }
+      .sector-table td.flat {
+        opacity: 0.7;
+      }
+      .sector-table td.hot {
+        background: rgba(201, 162, 39, 0.10);
+      }
+      .sector-table .arrow {
+        font-size: 0.7em;
+        margin-right: 4px;
+        opacity: 0.9;
+      }
+      .sector-table .rank {
+        display: inline-block;
+        min-width: 1.4em;
+        margin-right: 8px;
+        font-size: 0.75rem;
+        opacity: 0.55;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+    </style>
   </head>
   <body>
     <div class="wrap">
